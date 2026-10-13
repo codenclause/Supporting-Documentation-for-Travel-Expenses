@@ -9,12 +9,23 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="출장증빙">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧾%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="캡처를 올리면 금액과 구분을 붙여 PNG로 정리하고 메일로 보내요">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://codenclause.github.io/Supporting-Documentation-for-Travel-Expenses/">
+<meta property="og:title" content="출장 증빙">
+<meta property="og:description" content="캡처를 올리면 금액과 구분을 붙여 PNG로 정리하고 메일로 보내요">
+<meta property="og:image" content="https://codenclause.github.io/Supporting-Documentation-for-Travel-Expenses/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{
   --bg:#F3F4F8; --card:#FFFFFF; --ink:#1A1D29; --sub:#6B7184; --faint:#9AA0B2; --line:#E4E6EE; --field:#F5F6FA;
-  --trans:#4361EE; --trans-soft:#E8ECFE; --stay:#0F9D76; --stay-soft:#E2F5EE; --etc:#7C8296; --etc-soft:#EEEFF4;
+  --trans:#0B5CAD; --trans-soft:#E3EEF9; --stay:#00A88F; --stay-soft:#DDF5F0; --etc:#7C8296; --etc-soft:#EEEFF4;
   --danger:#E5484D; --shadow:0 1px 2px rgba(26,29,41,.04), 0 8px 24px rgba(26,29,41,.06);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
@@ -23,13 +34,13 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#12141C; --card:#1C1F2A; --ink:#ECEEF4; --sub:#A2A8BA; --faint:#6E7488; --line:#2C3040; --field:#252937;
-    --trans:#8098FF; --trans-soft:#26305A; --stay:#4FD1A5; --stay-soft:#173A31; --etc:#A2A8BA; --etc-soft:#2A2E3C;
+    --trans:#5FA8F5; --trans-soft:#16304D; --stay:#3FD6B8; --stay-soft:#12392F; --etc:#A2A8BA; --etc-soft:#2A2E3C;
     --danger:#FF7A7E; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#12141C; --card:#1C1F2A; --ink:#ECEEF4; --sub:#A2A8BA; --faint:#6E7488; --line:#2C3040; --field:#252937;
-  --trans:#8098FF; --trans-soft:#26305A; --stay:#4FD1A5; --stay-soft:#173A31; --etc:#A2A8BA; --etc-soft:#2A2E3C;
+  --trans:#5FA8F5; --trans-soft:#16304D; --stay:#3FD6B8; --stay-soft:#12392F; --etc:#A2A8BA; --etc-soft:#2A2E3C;
   --danger:#FF7A7E; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
@@ -127,6 +138,8 @@ ol#list{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:col
 .btns{display:flex;gap:8px}
 .btn{flex:1;border:0;border-radius:16px;padding:14px 10px;font-size:15px;font-weight:700;cursor:pointer;background:var(--field);color:var(--ink)}
 .btn.primary{background:var(--trans);color:#fff;flex:1.6}
+:root[data-theme="dark"] .btn.primary{color:#0B1424}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0B1424}}
 .btn:active{transform:scale(.98)}
 .btn[hidden]{display:none}
 .more{display:flex;justify-content:center;gap:16px;margin-top:8px}
