@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>출장 증빙</title>
+<meta name="theme-color" content="#F3F4F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12141C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="출장증빙">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧾%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#F3F4F8; --card:#FFFFFF; --ink:#1A1D29; --sub:#6B7184; --faint:#9AA0B2; --line:#E4E6EE; --field:#F5F6FA;
+  --trans:#4361EE; --trans-soft:#E8ECFE; --stay:#0F9D76; --stay-soft:#E2F5EE; --etc:#7C8296; --etc-soft:#EEEFF4;
+  --danger:#E5484D; --shadow:0 1px 2px rgba(26,29,41,.04), 0 8px 24px rgba(26,29,41,.06);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12141C; --card:#1C1F2A; --ink:#ECEEF4; --sub:#A2A8BA; --faint:#6E7488; --line:#2C3040; --field:#252937;
+    --trans:#8098FF; --trans-soft:#26305A; --stay:#4FD1A5; --stay-soft:#173A31; --etc:#A2A8BA; --etc-soft:#2A2E3C;
+    --danger:#FF7A7E; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12141C; --card:#1C1F2A; --ink:#ECEEF4; --sub:#A2A8BA; --faint:#6E7488; --line:#2C3040; --field:#252937;
+  --trans:#8098FF; --trans-soft:#26305A; --stay:#4FD1A5; --stay-soft:#173A31; --etc:#A2A8BA; --etc-soft:#2A2E3C;
+  --danger:#FF7A7E; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:16px;line-height:1.5;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+main{max-width:640px;margin:0 auto;padding:28px 18px 200px}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-0.035em;margin:0}
+.top p{margin:6px 0 0;color:var(--sub);font-size:14px}
+.count{font-size:13px;font-weight:600;color:var(--sub);background:var(--card);border-radius:999px;padding:6px 12px;box-shadow:var(--shadow);white-space:nowrap}
+
+/* trip */
+.trip{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.pill{display:flex;flex-direction:column;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:var(--shadow)}
+.pill span{font-size:12px;color:var(--sub);font-weight:600}
+.pill input{border:0;background:transparent;padding:2px 0 0;font-size:17px;font-weight:600}
+input,select,button{font:inherit;color:var(--ink);letter-spacing:inherit}
+input{min-width:0;width:100%;outline:none}
+input::placeholder{color:var(--faint);font-weight:500}
+:focus-visible{outline:2px solid var(--trans);outline-offset:2px;border-radius:8px}
+
+/* drop */
+.drop{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:20px;padding:18px;box-shadow:var(--shadow);cursor:pointer;
+  border:1.5px dashed transparent;transition:border-color .15s, transform .1s}
+.drop:active{transform:scale(.99)}
+.drop.over{border-color:var(--trans)}
+.drop .plus{flex:none;width:48px;height:48px;border-radius:14px;background:var(--trans);display:grid;place-items:center}
+.drop .plus svg{width:24px;height:24px;stroke:#fff}
+.drop strong{display:block;font-size:16px;font-weight:700}
+.drop small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
+.opts{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 4px 0;font-size:13px;color:var(--sub)}
+.switch{display:flex;align-items:center;gap:8px;cursor:pointer}
+.switch[hidden]{display:none}
+.switch input{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;transition:background .15s;flex:none}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked{background:var(--trans)}
+.switch input:checked::after{transform:translateX(16px)}
+#status{min-height:20px;margin:10px 4px 6px;font-size:13px;color:var(--sub)}
+#status.err{color:var(--danger)}
+
+/* items */
+ol#list{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.item{--c:var(--trans);--cs:var(--trans-soft);background:var(--card);border-radius:22px;padding:14px;box-shadow:var(--shadow)}
+.item[data-group="숙박비"]{--c:var(--stay);--cs:var(--stay-soft)}
+.item[data-group="기타"]{--c:var(--etc);--cs:var(--etc-soft)}
+.head{display:flex;gap:14px}
+.thumb{flex:none;width:76px;height:100px;border-radius:12px;object-fit:cover;object-position:top;background:var(--field);cursor:zoom-in}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:0 2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;background:var(--field);color:var(--sub);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--cs);color:var(--c)}
+.amt{display:flex;align-items:baseline;gap:4px;border-bottom:2px solid var(--line);padding-bottom:2px;transition:border-color .15s}
+.amt:focus-within{border-color:var(--c)}
+.amt input{border:0;background:transparent;font-size:28px;font-weight:800;letter-spacing:-0.03em;padding:0;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.amt span{font-size:18px;font-weight:700;color:var(--sub)}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:12px}
+.meta input{background:var(--field);border:0;border-radius:12px;padding:9px 12px;font-size:14px;font-weight:500}
+.meta input[type=date]{width:auto;min-width:140px}
+.fname{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--sub);overflow:hidden}
+.fname svg{flex:none;width:14px;height:14px;stroke:var(--faint)}
+.fname b{font-weight:500;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.fname b::-webkit-scrollbar{display:none}
+.tools{display:flex;align-items:center;gap:4px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.tools .sum{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);margin-right:auto;cursor:pointer}
+.tools .sum input{width:18px;height:18px;accent-color:var(--c)}
+.ic{border:0;background:transparent;border-radius:10px;padding:7px 9px;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer}
+.ic:hover{background:var(--field)}
+.ic:disabled{opacity:.3;cursor:default;background:transparent}
+.ic svg{width:17px;height:17px;stroke:currentColor}
+.ic.del:hover{color:var(--danger)}
+.ic[hidden]{display:none}
+
+.empty{text-align:center;color:var(--faint);font-size:14px;padding:36px 0 12px}
+
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px))}
+.dock[hidden]{display:none}
+.dock-in{max-width:640px;margin:0 auto;background:color-mix(in srgb, var(--card) 88%, transparent);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:24px;padding:14px;
+  box-shadow:0 -2px 30px rgba(26,29,41,.12);border:1px solid var(--line)}
+.sums{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:2px 4px 12px}
+.sums .total small{display:block;font-size:12px;color:var(--sub);font-weight:600}
+.sums .total b{font-size:26px;font-weight:800;letter-spacing:-0.03em}
+.sums .parts{display:flex;gap:12px;font-size:13px;color:var(--sub);text-align:right}
+.sums .parts i{font-style:normal;display:block;font-size:11px;font-weight:600}
+.sums .parts .t i{color:var(--trans)} .sums .parts .s i{color:var(--stay)}
+.sums .parts span{font-weight:700;color:var(--ink)}
+.btns{display:flex;gap:8px}
+.btn{flex:1;border:0;border-radius:16px;padding:14px 10px;font-size:15px;font-weight:700;cursor:pointer;background:var(--field);color:var(--ink)}
+.btn.primary{background:var(--trans);color:#fff;flex:1.6}
+.btn:active{transform:scale(.98)}
+.btn[hidden]{display:none}
+.more{display:flex;justify-content:center;gap:16px;margin-top:8px}
+.more button{border:0;background:transparent;font-size:13px;color:var(--sub);font-weight:600;cursor:pointer;padding:4px 6px}
+
+/* dialogs */
+dialog{border:none;border-radius:20px;padding:0;max-width:min(94vw,720px);max-height:92vh;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(10,12,20,.6)}
+#viewer img{display:block;max-width:100%;max-height:88vh}
+#cropper{padding:14px}
+.crop-stage{position:relative;display:inline-block;touch-action:none;user-select:none;-webkit-user-select:none;line-height:0;overflow:hidden;border-radius:12px;cursor:crosshair}
+#cropImg{display:block;max-width:100%;max-height:66vh;pointer-events:none}
+#cropBox{position:absolute;border:2px solid #fff;border-radius:4px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);pointer-events:none}
+.crop-help{margin:10px 2px;color:var(--sub);font-size:14px}
+.crop-actions{display:flex;gap:8px}
+.crop-actions .btn{padding:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>출장 증빙</h1>
+      <p>캡처를 올리면 이름 붙여 PNG로 정리해요</p>
+    </div>
+    <span class="count num" id="count" hidden></span>
+  </div>
+
+  <div class="trip">
+    <label class="pill"><span>출장 시작일</span><input type="date" id="tripDate"></label>
+    <label class="pill"><span>출장지</span><input id="tripPlace" placeholder="광주"></label>
+  </div>
+
+  <label class="drop" id="drop">
+    <input type="file" id="fileInput" multiple accept="image/*,application/pdf" hidden>
+    <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span><strong id="dropTitle">캡처 추가하기</strong><small id="dropHint">끌어다 놓거나 Ctrl+V로 붙여넣기. 이미지, PDF</small></span>
+  </label>
+  <div class="opts">
+    <label class="switch" id="autoWrap" hidden><input type="checkbox" id="autoRead" checked><span>금액 자동으로 읽기</span></label>
+    <span id="localNote" hidden>기기 안에서만 처리돼요</span>
+  </div>
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <ol id="list"></ol>
+  <p class="empty" id="empty">KTX 영수증, 카드전표, 숙박 영수증 캡처를 올려보세요</p>
+</main>
+
+<div class="dock" id="dock" hidden>
+  <div class="dock-in">
+    <div class="sums">
+      <div class="total"><small>합계</small><b class="num" id="tAll">0원</b></div>
+      <div class="parts num">
+        <div class="t"><i>교통비</i><span id="tTrans">0원</span></div>
+        <div class="s"><i>숙박비</i><span id="tStay">0원</span></div>
+        <div id="tEtcWrap" hidden><i>기타</i><span id="tEtc">0원</span></div>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn" id="saveZip">ZIP 저장</button>
+      <button class="btn primary" id="shareBtn" hidden>메일로 보내기</button>
+    </div>
+    <div class="more">
+      <button id="saveEach">PNG 하나씩 저장</button>
+      <button id="aiAll" hidden>전부 다시 읽기</button>
+      <button id="clearAll">모두 지우기</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="viewer"><img id="viewerImg" alt="증빙 원본 크게 보기"></dialog>
+<dialog id="cropper">
+  <div class="crop-stage" id="cropStage"><img id="cropImg" alt="자를 이미지"><div id="cropBox" hidden></div></div>
+  <p class="crop-help">남길 부분을 손가락으로 끌어서 고르세요</p>
+  <div class="crop-actions">
+    <button class="btn" id="cropReset">원본으로</button>
+    <button class="btn" id="cropCancel">취소</button>
+    <button class="btn primary" id="cropApply" disabled>자르기</button>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script>
+const CATS = [
+  {id:'ktx',     group:'교통비', label:'KTX영수증', chip:'KTX',     sum:true},
+  {id:'transit', group:'교통비', label:'기타교통',  chip:'버스·택시', sum:true},
+  {id:'card',    group:'숙박비', label:'카드전표',  chip:'카드전표',  sum:true},
+  {id:'stay',    group:'숙박비', label:'숙박영수증', chip:'숙박영수증', sum:false},
+  {id:'done',    group:'숙박비', label:'숙박완료',  chip:'숙박완료',  sum:false},
+  {id:'etc',     group:'기타',   label:'기타',      chip:'기타',     sum:true},
+];
+const ICON = {
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
+  crop:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>',
+  read:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>',
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  del:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
+};
+const $ = s => document.querySelector(s);
+const list = $('#list'), statusEl = $('#status');
+let items = [], seq = 0, aiAvailable = false;
+
+try { if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e){}
+
+try { const saved = JSON.parse(localStorage.getItem('trip') || '{}'); if (saved.place) $('#tripPlace').value = saved.place; } catch(e){}
+$('#tripDate').value = new Date(Date.now() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+['#tripDate','#tripPlace'].forEach(s => $(s).addEventListener('input', () => {
+  try { localStorage.setItem('trip', JSON.stringify({place:$('#tripPlace').value})); } catch(e){}
+  refreshNames();
+}));
+
+function setStatus(msg, err){ statusEl.textContent = msg || ''; statusEl.classList.toggle('err', !!err); }
+const cat = id => CATS.find(c => c.id === id);
+const won = n => (Number(n)||0).toLocaleString('ko-KR') + '원';
+const clean = s => String(s||'').replace(/[\\/:*?"<>|\r\n\t]+/g,' ').replace(/\s+/g,' ').trim();
+
+function guessCat(name){
+  const n = name.toLowerCase();
+  if (/ktx|korail|코레일|srt|승차권|기차/.test(n)) return 'ktx';
+  if (/매출전표|전표|카드/.test(n)) return 'card';
+  if (/숙박완료|이용완료|체크아웃/.test(n)) return 'done';
+  if (/숙박|호텔|야놀자|여기어때|agoda|booking|영수증/.test(n)) return 'stay';
+  return 'ktx';
+}
+function fileName(it, idx){
+  const c = cat(it.cat), parts = [];
+  const d = (it.date || $('#tripDate').value || '').replaceAll('-','');
+  if (d) parts.push(d);
+  const place = clean($('#tripPlace').value);
+  if (place) parts.push(place);
+  parts.push(String(idx+1).padStart(2,'0'));
+  parts.push(c.group === c.label ? c.group : c.group + '_' + c.label);
+  if (clean(it.memo)) parts.push(clean(it.memo));
+  if (it.amount) parts.push(Number(it.amount) + '원');
+  return parts.join('_') + '.png';
+}
+
+// ---------- input ----------
+const drop = $('#drop'), fileInput = $('#fileInput');
+fileInput.addEventListener('change', e => { addFiles([...e.target.files]); fileInput.value=''; });
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles([...e.dataTransfer.files]));
+document.addEventListener('paste', e => {
+  const files = [...(e.clipboardData?.files || [])];
+  if (!files.length) return;
+  e.preventDefault();
+  addFiles(files.map((f,i) => new File([f], `붙여넣은 캡처 ${i+1}.png`, {type:f.type})));
+});
+if (matchMedia('(pointer: coarse)').matches){
+  $('#dropHint').textContent = '스크린샷, 사진, PDF 영수증. 여러 장 한 번에';
+}
+
+async function addFiles(files){
+  if (!files.length) return;
+  let added = 0, failed = []; const startLen = items.length;
+  setStatus('PNG로 바꾸는 중…');
+  for (const f of files){
+    try {
+      if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) {
+        const pages = await pdfToPngs(f);
+        pages.forEach((b,i) => { push(b, pages.length>1 ? `${f.name} (${i+1}쪽)` : f.name); added++; });
+      } else { push(await imageToPng(f), f.name); added++; }
+    } catch(err){ console.error(err); failed.push(f.name); }
+  }
+  render();
+  if (failed.length) setStatus(`${failed.join(', ')}: 읽을 수 없는 형식이에요. 스크린샷이나 JPG로 다시 올려주세요.`, true);
+  else setStatus(`${added}장 추가했어요. 구분과 금액을 확인하세요.`);
+  const fresh = items.slice(startLen);
+  if (aiAvailable && $('#autoRead').checked && fresh.length) autoReadItems(fresh);
+}
+async function autoReadItems(arr){
+  for (let i = 0; i < arr.length && aiAvailable; i++){
+    setStatus(`금액 읽는 중 ${i+1}/${arr.length}…`);
+    arr[i].reading = true; render();
+    await aiRead(arr[i]); arr[i].reading = false; render();
+  }
+}
+function push(blob, name){
+  const c = guessCat(name);
+  items.push({ key: ++seq, blob, origBlob: blob, url: URL.createObjectURL(blob), orig: name,
+               cat: c, sum: cat(c).sum, amount: '', date: '', memo: '', catTouched: false });
+}
+async function imageToPng(file){
+  if (file.type === 'image/png') return file;
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const cv = document.createElement('canvas'); cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+    const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(img,0,0);
+    return await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('png')), 'image/png'));
+  } finally { URL.revokeObjectURL(url); }
+}
+async function pdfToPngs(file){
+  if (!window.pdfjsLib) throw new Error('pdf.js 없음');
+  const pdf = await pdfjsLib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const out = [];
+  for (let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p), vp = page.getViewport({scale: 2});
+    const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+    const ctx = cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext: ctx, viewport: vp}).promise;
+    out.push(await new Promise(res => cv.toBlob(res, 'image/png')));
+  }
+  return out;
+}
+
+// ---------- list ----------
+function render(){
+  list.innerHTML = '';
+  items.forEach((it, idx) => {
+    const li = document.createElement('li');
+    li.className = 'item'; li.dataset.key = it.key; li.dataset.group = cat(it.cat).group;
+    li.innerHTML = `
+      <div class="head">
+        <img class="thumb" alt="">
+        <div class="main">
+          <div class="chips" role="group" aria-label="구분">${CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id===it.cat}">${c.chip}</button>`).join('')}</div>
+          <label class="amt"><input data-f="amount" inputmode="numeric" placeholder="${it.reading ? '읽는 중…' : '0'}" aria-label="금액"><span>원</span></label>
+        </div>
+      </div>
+      <div class="meta">
+        <input type="date" data-f="date" aria-label="날짜">
+        <input data-f="memo" placeholder="메모 (예: 서울-광주송정)" aria-label="메모">
+      </div>
+      <div class="fname">${ICON.file}<b></b></div>
+      <div class="tools">
+        <label class="sum"><input type="checkbox" data-f="sum"> 합계 포함</label>
+        <button class="ic" data-a="crop" aria-label="자르기">${ICON.crop}<span>자르기</span></button>
+        <button class="ic" data-a="ai" aria-label="금액 읽기" ${aiAvailable?'':'hidden'}>${ICON.read}</button>
+        <button class="ic" data-a="up" aria-label="위로" ${idx===0?'disabled':''}>${ICON.up}</button>
+        <button class="ic" data-a="down" aria-label="아래로" ${idx===items.length-1?'disabled':''}>${ICON.down}</button>
+        <button class="ic del" data-a="del" aria-label="빼기">${ICON.del}</button>
+      </div>`;
+    const img = li.querySelector('.thumb'); img.src = it.url; img.alt = it.orig;
+    li.querySelector('[data-f=amount]').value = it.amount ? Number(it.amount).toLocaleString('ko-KR') : '';
+    li.querySelector('[data-f=date]').value = it.date || $('#tripDate').value;
+    li.querySelector('[data-f=memo]').value = it.memo;
+    li.querySelector('[data-f=sum]').checked = it.sum;
+    list.appendChild(li);
+  });
+  const any = items.length > 0;
+  $('#dock').hidden = !any; $('#empty').hidden = any;
+  $('#count').hidden = !any; $('#count').textContent = `${items.length}장`;
+  $('#aiAll').hidden = !aiAvailable;
+  refreshNames();
+}
+function refreshNames(){
+  [...list.children].forEach((li, idx) => {
+    const it = items.find(x => x.key == li.dataset.key);
+    li.querySelector('.fname b').textContent = fileName(it, idx);
+    li.dataset.group = cat(it.cat).group;
+  });
+  const t = {교통비:0, 숙박비:0, 기타:0};
+  items.forEach(it => { if (it.sum && it.amount) t[cat(it.cat).group] += Number(it.amount); });
+  $('#tTrans').textContent = won(t.교통비); $('#tStay').textContent = won(t.숙박비);
+  $('#tEtc').textContent = won(t.기타); $('#tEtcWrap').hidden = !t.기타;
+  $('#tAll').textContent = won(t.교통비 + t.숙박비 + t.기타);
+}
+list.addEventListener('input', e => {
+  const li = e.target.closest('.item'); if (!li) return;
+  const it = items.find(x => x.key == li.dataset.key);
+  const f = e.target.dataset.f;
+  if (f === 'amount'){
+    const digits = e.target.value.replace(/[^\d]/g,'');
+    it.amount = digits; e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+  } else if (f === 'sum'){ it.sum = e.target.checked; }
+  else if (f === 'date'){ it.date = e.target.value === $('#tripDate').value ? '' : e.target.value; }
+  else if (f) { it[f] = e.target.value; }
+  refreshNames();
+});
+list.addEventListener('click', async e => {
+  const li = e.target.closest('.item'); if (!li) return;
+  const i = items.findIndex(x => x.key == li.dataset.key), it = items[i];
+  if (e.target.classList.contains('thumb')){ $('#viewerImg').src = it.url; $('#viewer').showModal(); return; }
+  const chip = e.target.closest('[data-cat]');
+  if (chip){ it.cat = chip.dataset.cat; it.catTouched = true; it.sum = cat(it.cat).sum; render(); return; }
+  const btn = e.target.closest('[data-a]'); if (!btn) return;
+  const a = btn.dataset.a;
+  if (a === 'crop'){ openCrop(it); return; }
+  if (a === 'del'){ URL.revokeObjectURL(it.url); items.splice(i,1); render(); }
+  if (a === 'up' && i > 0){ [items[i-1], items[i]] = [items[i], items[i-1]]; render(); }
+  if (a === 'down' && i < items.length-1){ [items[i+1], items[i]] = [items[i], items[i+1]]; render(); }
+  if (a === 'ai'){ it.reading = true; render(); await aiRead(it, true); it.reading = false; render(); }
+});
+$('#viewer').addEventListener('click', () => $('#viewer').close());
+$('#clearAll').addEventListener('click', () => {
+  if (!confirm('올린 증빙을 모두 지울까요?')) return;
+  items.forEach(it => URL.revokeObjectURL(it.url)); items = []; render(); setStatus('');
+});
+
+// ---------- on-device reading ----------
+let ocrWorker = null;
+async function getOcr(){
+  if (!ocrWorker){ setStatus('글자 인식 준비 중… 처음 한 번은 조금 걸려요.'); ocrWorker = await Tesseract.createWorker('kor+eng'); }
+  return ocrWorker;
+}
+function parseReceipt(raw){
+  const text = raw.replace(/[ \t]+/g, ' '), flat = text.replace(/\s/g, '');
+  let type = null;
+  if (/KTX|SRT|코레일|승차권|열차|호차|운임/i.test(flat)) type = 'ktx';
+  else if (/매출전표|카드매출|승인번호|가맹점/.test(flat)) type = 'card';
+  else if (/이용완료|숙박완료|체크아웃완료/.test(flat)) type = 'done';
+  else if (/숙박|호텔|객실|체크인|야놀자|여기어때|아고다|모텔|리조트/.test(flat)) type = 'stay';
+  else if (/택시|버스|고속|시외/.test(flat)) type = 'transit';
+  const numRe = /(\d{1,3}(?:,\d{3})+|\d{4,7})(\s*원)?/g;
+  const pick = (seg, out) => { for (const m of seg.matchAll(numRe)){
+    if (!(m[1].includes(',') || m[2])) continue;
+    const n = Number(m[1].replace(/,/g, '')); if (n >= 1000 && n < 10000000) out.push(n); } };
+  const lines = text.split(/\n/);
+  const key = /결제\s*금액|승인\s*금액|합\s*계|총\s*(결제)?\s*금액|총액|받을\s*금액|영수\s*금액|결제\s*요금|운\s*임|판매\s*금액|최종/;
+  const c = [];
+  lines.forEach((l, i) => { if (key.test(l)) pick(l + ' ' + (lines[i+1] || ''), c); });
+  if (!c.length) pick(text, c);
+  const amount = c.length ? Math.max(...c) : null;
+  let date = null;
+  const dm = text.match(/(20\d{2})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);
+  if (dm) date = `${dm[1]}-${dm[2].padStart(2,'0')}-${dm[3].padStart(2,'0')}`;
+  let memo = null;
+  if (type === 'ktx'){ const r = flat.match(/([가-힣]{2,4})(?:→|->|~|▶|>)([가-힣]{2,4})/); if (r) memo = `${r[1]}-${r[2]}`; }
+  return {type, amount, date, memo};
+}
+async function aiRead(it, force){
+  try {
+    const w = await getOcr();
+    const { data: { text } } = await w.recognize(it.blob);
+    const r = parseReceipt(text);
+    if (r.type && !it.catTouched){ it.cat = r.type; it.sum = cat(r.type).sum; }
+    if (r.amount && (force || !it.amount)) it.amount = String(r.amount);
+    if (r.date && (force || !it.date)) it.date = r.date;
+    if (r.memo && !it.memo) it.memo = r.memo;
+    setStatus(r.amount ? '읽은 금액을 넣었어요. 맞는지 꼭 확인하세요.' : '금액을 찾지 못했어요. 직접 입력해 주세요.');
+  } catch(err){ console.error(err); setStatus('자동으로 읽지 못했어요. 금액을 직접 입력해 주세요.', true); }
+}
+$('#aiAll').addEventListener('click', () => autoReadItems(items.filter(it => !it.amount)));
+aiAvailable = !!window.Tesseract;
+$('#autoWrap').hidden = !aiAvailable; $('#localNote').hidden = !aiAvailable;
+try { $('#autoRead').checked = localStorage.getItem('autoRead') !== '0'; } catch(e){}
+$('#autoRead').addEventListener('change', e => { try { localStorage.setItem('autoRead', e.target.checked ? '1' : '0'); } catch(_){} });
+
+// ---------- saving & sending ----------
+function saveFile(filename, blob){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function summaryText(){
+  const lines = [`출장지: ${$('#tripPlace').value || '-'}`, `출장 시작일: ${$('#tripDate').value || '-'}`, ''];
+  items.forEach((it, i) => lines.push(`${fileName(it, i)}${it.sum ? '' : '  (합계 제외)'}`));
+  lines.push('', `교통비 ${$('#tTrans').textContent}`, `숙박비 ${$('#tStay').textContent}`);
+  if ($('#tEtc').textContent !== '0원') lines.push(`기타 ${$('#tEtc').textContent}`);
+  lines.push(`합계 ${$('#tAll').textContent}`);
+  return lines.join('\r\n');
+}
+function zipName(){
+  const d = ($('#tripDate').value || '').replaceAll('-','');
+  return [d, clean($('#tripPlace').value), '출장증빙'].filter(Boolean).join('_') + '.zip';
+}
+$('#saveZip').addEventListener('click', async () => {
+  if (!window.JSZip){ setStatus('압축 도구를 불러오지 못했어요. PNG 하나씩 저장을 써주세요.', true); return; }
+  const zip = new JSZip();
+  items.forEach((it, i) => zip.file(fileName(it, i), it.blob));
+  zip.file('증빙목록.txt', '\uFEFF' + summaryText());
+  saveFile(zipName(), await zip.generateAsync({type: 'blob'}));
+  setStatus(`${zipName()} 저장했어요.`);
+});
+$('#saveEach').addEventListener('click', async () => {
+  for (let i = 0; i < items.length; i++){ saveFile(fileName(items[i], i), items[i].blob); await new Promise(r => setTimeout(r, 400)); }
+  setStatus(`${items.length}개 파일을 저장했어요.`);
+});
+try {
+  const probe = new File(['x'], 'probe.png', {type: 'image/png'});
+  if (navigator.canShare && navigator.canShare({files: [probe]})) $('#shareBtn').hidden = false;
+} catch(e){}
+$('#shareBtn').addEventListener('click', async () => {
+  const files = items.map((it, i) => new File([it.blob], fileName(it, i), {type: 'image/png'}));
+  try { await navigator.share({files, title: zipName().replace('.zip', ''), text: summaryText()}); setStatus('보냈어요.'); }
+  catch(err){ if (err.name !== 'AbortError') setStatus('보내지 못했어요. 저장한 뒤 메일에 첨부해 주세요.', true); }
+});
+
+// ---------- crop ----------
+let cropIt = null, sel = null, start = null;
+const stage = $('#cropStage'), cimg = $('#cropImg'), box = $('#cropBox');
+function openCrop(it){
+  cropIt = it; sel = null; start = null; box.hidden = true;
+  $('#cropApply').disabled = true; $('#cropReset').hidden = it.blob === it.origBlob;
+  cimg.src = it.url; $('#cropper').showModal();
+}
+function pt(e){ const r = cimg.getBoundingClientRect();
+  return { x: Math.min(Math.max(e.clientX - r.left, 0), r.width), y: Math.min(Math.max(e.clientY - r.top, 0), r.height) }; }
+function drawBox(){ box.hidden = false; Object.assign(box.style, {left: sel.x+'px', top: sel.y+'px', width: sel.w+'px', height: sel.h+'px'}); }
+stage.addEventListener('pointerdown', e => { e.preventDefault(); stage.setPointerCapture(e.pointerId); start = pt(e); sel = {x:start.x, y:start.y, w:0, h:0}; drawBox(); });
+stage.addEventListener('pointermove', e => { if (!start) return; const p = pt(e);
+  sel = { x: Math.min(start.x, p.x), y: Math.min(start.y, p.y), w: Math.abs(p.x - start.x), h: Math.abs(p.y - start.y) }; drawBox(); });
+['pointerup','pointercancel'].forEach(t => stage.addEventListener(t, () => { start = null; $('#cropApply').disabled = !(sel && sel.w > 10 && sel.h > 10); }));
+$('#cropCancel').addEventListener('click', () => $('#cropper').close());
+$('#cropReset').addEventListener('click', () => {
+  URL.revokeObjectURL(cropIt.url); cropIt.blob = cropIt.origBlob; cropIt.url = URL.createObjectURL(cropIt.blob);
+  $('#cropper').close(); render(); setStatus('원본으로 되돌렸어요.');
+});
+$('#cropApply').addEventListener('click', async () => {
+  const r = cimg.getBoundingClientRect(), sx = cimg.naturalWidth / r.width, sy = cimg.naturalHeight / r.height;
+  const cv = document.createElement('canvas');
+  cv.width = Math.max(1, Math.round(sel.w * sx)); cv.height = Math.max(1, Math.round(sel.h * sy));
+  cv.getContext('2d').drawImage(cimg, sel.x * sx, sel.y * sy, cv.width, cv.height, 0, 0, cv.width, cv.height);
+  const b = await new Promise(res => cv.toBlob(res, 'image/png'));
+  if (!b){ setStatus('자르지 못했어요. 다시 해주세요.', true); return; }
+  URL.revokeObjectURL(cropIt.url); cropIt.blob = b; cropIt.url = URL.createObjectURL(b);
+  $('#cropper').close(); render(); setStatus('잘랐어요.');
+});
+
+render();
+</script>
+</body>
+</html>
