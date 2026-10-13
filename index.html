@@ -76,7 +76,7 @@ input::placeholder{color:var(--faint);font-weight:500}
 .drop .plus svg{width:24px;height:24px;stroke:#fff}
 .drop strong{display:block;font-size:16px;font-weight:700}
 .drop small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
-.opts{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 4px 0;font-size:13px;color:var(--sub)}
+.opts{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:12px 4px 0;font-size:13px;color:var(--sub)}
 .switch{display:flex;align-items:center;gap:8px;cursor:pointer}
 .switch[hidden]{display:none}
 .switch input{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;transition:background .15s;flex:none}
@@ -181,7 +181,7 @@ dialog::backdrop{background:rgba(10,12,20,.6)}
   </label>
   <div class="opts">
     <label class="switch" id="autoWrap" hidden><input type="checkbox" id="autoRead" checked><span>금액 자동으로 읽기</span></label>
-    <span id="localNote" hidden>기기 안에서만 처리돼요</span>
+    <label class="switch"><input type="checkbox" id="korName"><span>한글 파일명</span></label>
   </div>
   <div id="status" role="status" aria-live="polite"></div>
 
@@ -269,16 +269,37 @@ function guessCat(name){
   if (/숙박|호텔|야놀자|여기어때|agoda|booking|영수증/.test(n)) return 'stay';
   return 'ktx';
 }
+const EN = {교통비:'TRANS', 숙박비:'LODGING', 기타:'ETC', KTX영수증:'KTX', 기타교통:'BUSTAXI', 카드전표:'CARD', 숙박영수증:'RECEIPT', 숙박완료:'STAYED'};
+const RR_I = ['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
+const RR_V = ['a','ae','ya','yae','eo','e','yeo','ye','o','wa','wae','oe','yo','u','wo','we','wi','yu','eu','ui','i'];
+const RR_F = ['','k','k','k','n','n','n','t','l','k','m','l','l','l','p','l','m','p','p','t','t','ng','t','t','k','t','p','t'];
+function romanize(str){
+  let out = '';
+  for (const ch of String(str||'')){
+    const code = ch.charCodeAt(0) - 0xAC00;
+    if (code >= 0 && code < 11172){
+      out += RR_I[Math.floor(code/588)] + RR_V[Math.floor((code%588)/28)] + RR_F[code%28];
+    } else out += ch;
+  }
+  return out;
+}
+function asciiPart(str){
+  return romanize(clean(str)).split(/[\s]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    .replace(/[^A-Za-z0-9\-]+/g, '');
+}
+const korNames = () => $('#korName').checked;
 function fileName(it, idx){
-  const c = cat(it.cat), parts = [];
+  const c = cat(it.cat), parts = [], ko = korNames();
   const d = (it.date || $('#tripDate').value || '').replaceAll('-','');
   if (d) parts.push(d);
-  const place = clean($('#tripPlace').value);
+  const place = ko ? clean($('#tripPlace').value) : asciiPart($('#tripPlace').value);
   if (place) parts.push(place);
   parts.push(String(idx+1).padStart(2,'0'));
-  parts.push(c.group === c.label ? c.group : c.group + '_' + c.label);
-  if (clean(it.memo)) parts.push(clean(it.memo));
-  if (it.amount) parts.push(Number(it.amount) + '원');
+  if (ko) parts.push(c.group === c.label ? c.group : c.group + '_' + c.label);
+  else parts.push(c.group === c.label ? EN[c.group] : EN[c.group] + '_' + EN[c.label]);
+  const memo = ko ? clean(it.memo) : asciiPart(it.memo);
+  if (memo) parts.push(memo);
+  if (it.amount) parts.push(Number(it.amount) + (ko ? '원' : 'won'));
   return parts.join('_') + '.png';
 }
 
@@ -481,7 +502,9 @@ async function aiRead(it, force){
 }
 $('#aiAll').addEventListener('click', () => autoReadItems(items.filter(it => !it.amount)));
 aiAvailable = !!window.Tesseract;
-$('#autoWrap').hidden = !aiAvailable; $('#localNote').hidden = !aiAvailable;
+$('#autoWrap').hidden = !aiAvailable;
+try { $('#korName').checked = localStorage.getItem('korName') === '1'; } catch(e){}
+$('#korName').addEventListener('change', e => { try { localStorage.setItem('korName', e.target.checked ? '1' : '0'); } catch(_){} refreshNames(); });
 try { $('#autoRead').checked = localStorage.getItem('autoRead') !== '0'; } catch(e){}
 $('#autoRead').addEventListener('change', e => { try { localStorage.setItem('autoRead', e.target.checked ? '1' : '0'); } catch(_){} });
 
@@ -500,13 +523,14 @@ function summaryText(){
 }
 function zipName(){
   const d = ($('#tripDate').value || '').replaceAll('-','');
-  return [d, clean($('#tripPlace').value), '출장증빙'].filter(Boolean).join('_') + '.zip';
+  const ko = korNames();
+  return [d, ko ? clean($('#tripPlace').value) : asciiPart($('#tripPlace').value), ko ? '출장증빙' : 'TravelExpenses'].filter(Boolean).join('_') + '.zip';
 }
 $('#saveZip').addEventListener('click', async () => {
   if (!window.JSZip){ setStatus('압축 도구를 불러오지 못했어요. PNG 하나씩 저장을 써주세요.', true); return; }
   const zip = new JSZip();
   items.forEach((it, i) => zip.file(fileName(it, i), it.blob));
-  zip.file('증빙목록.txt', '\uFEFF' + summaryText());
+  zip.file(korNames() ? '증빙목록.txt' : 'summary.txt', '\uFEFF' + summaryText());
   saveFile(zipName(), await zip.generateAsync({type: 'blob'}));
   setStatus(`${zipName()} 저장했어요.`);
 });
